@@ -1,0 +1,57 @@
+name: Deploy Ansible Playbooks
+
+on:
+  workflow_dispatch:
+
+jobs:
+  DeployAnsiblePlaybooks:
+    name: Deploy Ansible Playbooks
+    runs-on: ubuntu-latest  # You can change this as needed
+
+    # Define variables (equivalent to parameters)
+    env:
+      AnsibleVariableFiles: ${{ secrets.AnsibleVariableFiles }}
+      AnsibleWorkingDirectory: ${{ secrets.AnsibleWorkingDirectory }}
+      AnsibleRolesWorkingDirectory: ${{ secrets.AnsibleRolesWorkingDirectory }}
+      DeploymentPackage: ${{ secrets.DeploymentPackage }}
+      adminPassword: ${{ secrets.adminPassword }}
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      ARM_SAS_TOKEN: ${{ secrets.ARM_SAS_TOKEN }}
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+          persist-credentials: true
+
+      # Checkout Ansible roles repository (if needed)
+      - name: Checkout Ansible Roles
+        uses: actions/checkout@v3
+        with:
+          repository: ansibleRoles
+          path: roles
+          submodules: true
+          persist-credentials: true
+
+      # Create ansible.cfg file in the playbook directory
+      - name: Create ansible.cfg file
+        run: |
+          echo "[defaults]" >> ansible.cfg
+          echo interpreter_python_fallback=/usr/bin/python3 >> ansible.cfg
+          echo "host_key_checking = False" >> ansible.cfg
+          echo "roles_path = ${{ env.AnsibleRolesWorkingDirectory }}" >> ansible.cfg
+        working-directory: ${{ env.AnsibleWorkingDirectory }}/ansible/plays
+
+      # Run Ansible Playbook
+      - name: Run Ansible Playbook
+        run: |
+          pwd
+          echo 'Running ansible-playbook...'
+          ansible-playbook main.yml -i ../inventory/hosts --extra-vars "ansibleuser=locadm ansiblepass=${{ env.adminPassword }} \
+           azure_client_id=${{ secrets.ARM_CLIENT_ID }} azure_secret=${{ secrets.ARM_CLIENT_SECRET }} azure_tenant=${{ secrets.ARM_TENANT_ID }}"
+        working-directory: ${{ env.AnsibleWorkingDirectory }}/ansible/plays
