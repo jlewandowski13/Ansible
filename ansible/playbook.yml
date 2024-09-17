@@ -1,5 +1,5 @@
 ---
-- name: Install Azure CLI
+- name: Install and Configure Apache Web Server
   hosts: all
   become: yes
 
@@ -9,38 +9,26 @@
         update_cache: yes
         upgrade: dist
 
-    - name: Install Python and pip
+    - name: Install Apache
       apt:
-        name: 
-          - python3
-          - python3-pip
+        name: apache2
         state: present
 
-    - name: Install Ansible using pip
-      pip:
-        name: ansible
-        state: present
+    - name: Ensure Apache is running and enabled
+      service:
+        name: apache2
+        state: started
+        enabled: yes
 
-    - name: Install lsb-release
-      apt:
-        name: lsb-release
-        state: present
-
-    - name: Add Microsoft repository key
-      apt_key:
-        url: https://packages.microsoft.com/keys/microsoft.asc
-        state: present
-
-    - name: Add Microsoft repository
-      apt_repository:
-        repo: deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main
-        state: present
-
-    - name: Update apt cache
-      apt:
-        update_cache: yes
-
-    - name: Install Azure CLI
-      apt:
-        name: azure-cli
-        state: present
+    - name: Create a simple HTML file
+      copy:
+        dest: /var/www/html/index.html
+        content: |
+          <html>
+          <head>
+            <title>Welcome to Apache!</title>
+          </head>
+          <body>
+            <h1>Success! The Apache web server is installed and running.</h1>
+          </body>
+          </html>
