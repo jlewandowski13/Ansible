@@ -1,6 +1,6 @@
 ---
 - name: Install Azure CLI
-  hosts: 10.190.4.6
+  hosts: web-servers
   become: yes
 
   tasks:
