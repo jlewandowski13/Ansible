@@ -41,11 +41,10 @@ jobs:
       # Create ansible.cfg file in the playbook directory
       - name: Create ansible.cfg file
         run: |
-          echo "[defaults]" >> ansible.cfg
-          echo interpreter_python_fallback=/usr/bin/python3 >> ansible.cfg
-          echo "host_key_checking = False" >> ansible.cfg
-          echo "roles_path = ${{ env.AnsibleRolesWorkingDirectory }}" >> ansible.cfg
-        working-directory: ansible/playbook.yml
+          echo "[defaults]" > ${{ env.AnsibleWorkingDirectory }}/ansible.cfg
+          echo "interpreter_python_fallback=/usr/bin/python3" >> ${{ env.AnsibleWorkingDirectory }}/ansible.cfg
+          echo "host_key_checking = False" >> ${{ env.AnsibleWorkingDirectory }}/ansible.cfg
+          echo "roles_path = ${{ env.AnsibleRolesWorkingDirectory }}" >> ${{ env.AnsibleWorkingDirectory }}/ansible.cfg
 
       # Run Ansible Playbook
       - name: Run Ansible Playbook
@@ -54,4 +53,4 @@ jobs:
           echo 'Running ansible-playbook...'
           ansible-playbook main.yml -i ../inventory/hosts --extra-vars "ansibleuser=lew ansiblepass=${{ env.adminPassword }} \
            azure_client_id=${{ secrets.ARM_CLIENT_ID }} azure_secret=${{ secrets.ARM_CLIENT_SECRET }} azure_tenant=${{ secrets.ARM_TENANT_ID }}"
-        working-directory: ansible/playbook.yml
+        working-directory: ${{ env.AnsibleWorkingDirectory }}
