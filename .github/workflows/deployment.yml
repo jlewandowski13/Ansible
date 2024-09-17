@@ -52,6 +52,6 @@ jobs:
         run: |
           pwd
           echo 'Running ansible-playbook...'
-           ansible-playbook playbook.yml -i ../inventory --extra-vars "ansibleuser=lew ansiblepass=${{ env.adminPassword }}
+           ansible-playbook playbook.yml -i /inventory --extra-vars "ansibleuser=lew ansiblepass=${{ env.adminPassword }}
            azure_client_id=${{ secrets.ARM_CLIENT_ID }} azure_secret=${{ secrets.ARM_CLIENT_SECRET }} azure_tenant=${{ secrets.ARM_TENANT_ID }}"
         working-directory: ansible
