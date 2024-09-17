@@ -3,6 +3,6 @@ all:
   children:
     web-servers:
       hosts:
-        localhost
+        10.190.4.6
       vars:
         ansible_user: lew
