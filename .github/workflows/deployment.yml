@@ -45,7 +45,7 @@ jobs:
           echo interpreter_python_fallback=/usr/bin/python3 >> ansible.cfg
           echo "host_key_checking = False" >> ansible.cfg
           echo "roles_path = ${{ env.AnsibleRolesWorkingDirectory }}" >> ansible.cfg
-        working-directory: ansible/playbook.yml
+        working-directory: ansible
 
       # Run Ansible Playbook
       - name: Run Ansible Playbook
