@@ -38,13 +38,14 @@ jobs:
           submodules: true
           persist-credentials: true
 
-      # Create ansible.cfg file in the playbook directory
+      # Create ansible.cfg file in the working directory
       - name: Create ansible.cfg file
         run: |
           echo "[defaults]" > ${{ env.AnsibleWorkingDirectory }}/ansible.cfg
           echo "interpreter_python_fallback=/usr/bin/python3" >> ${{ env.AnsibleWorkingDirectory }}/ansible.cfg
           echo "host_key_checking = False" >> ${{ env.AnsibleWorkingDirectory }}/ansible.cfg
           echo "roles_path = ${{ env.AnsibleRolesWorkingDirectory }}" >> ${{ env.AnsibleWorkingDirectory }}/ansible.cfg
+        working-directory: ${{ env.AnsibleWorkingDirectory }}
 
       # Run Ansible Playbook
       - name: Run Ansible Playbook
