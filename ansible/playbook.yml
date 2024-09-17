@@ -18,13 +18,13 @@
         dest: ~/.ssh/known_hosts
         mode: 0600
     - name: "check if known_hosts contains server's fingerprint"
-      command: ssh-keygen -F {{ inventory_hostname }}
+      command: ssh-keygen -F 10.190.4.6
       register: keygen
       failed_when: keygen.stderr != ''
       changed_when: false
 
     - name: fetch remote ssh key
-      command: ssh-keyscan -T5 {{ inventory_hostname }}
+      command: ssh-keyscan -T5 10.190.4.6
       register: keyscan
       failed_when: keyscan.rc != 0 or keyscan.stdout == ''
       changed_when: false
@@ -74,27 +74,3 @@
       path: /var/www/html/index.html
       state: absent
     become: yes
-- name: Basic configuration for all servers
-  hosts: all
-  tasks:
-    - name: ensure .ssh directory exists
-      file:
-        path: ~/.ssh
-        state: directory
-        mode: '0700'
-
-    - name: ensure known_hosts file exists
-      file:
-        path: ~/.ssh/known_hosts
-        state: touch
-        mode: '0644'
-
-    - name: check if known_hosts contains server's fingerprint
-      shell: grep -q "$(ssh-keyscan -T5 10.190.4.6)" ~/.ssh/known_hosts || echo "not found"
-      register: known_hosts_check
-      changed_when: known_hosts_check.stdout != "not found"
-
-    - name: fetch remote ssh key
-      command: ssh-keyscan -T5 10.190.4.6
-      register: ssh_keyscan_result
-      failed_when: ssh_keyscan_result.rc != 0 and ssh_keyscan_result.stdout == ""
