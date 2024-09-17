@@ -6,7 +6,7 @@ on:
 jobs:
   DeployAnsiblePlaybooks:
     name: Deploy Ansible Playbooks
-    runs-on: ubuntu-latest  # You can change this as needed
+    runs-on: self-hosted
 
     # Define variables (equivalent to parameters)
     env:
